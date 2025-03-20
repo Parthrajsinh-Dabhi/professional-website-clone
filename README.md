@@ -12,6 +12,5 @@ CSS:
   - Z-index management for layering elements
     
 JavaScript:
-  - DOM manipulation for dynamic content interaction
   - Event handling for buttons and links
   - Multi-level submenu for navigation
