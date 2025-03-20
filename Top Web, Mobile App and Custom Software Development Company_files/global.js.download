@@ -1,0 +1,435 @@
+var load_header_data = 0;
+jQuery(document).ready(function () {
+  //jQuery('.vp-popup').show();
+  // if (!getCookie('showpopup') && !getCookie('showjobpopup') ) {
+  // jQuery.get("https://ipinfo.io", function() {}, "jsonp").always(function(resp) {
+     
+  //            if(resp.country=='IN'){
+  //               jQuery('.show_job_popup_by_country').show();
+
+  //            }else{
+  //               jQuery('.show_brand_by_country').show();
+
+  //            }
+  //            if(resp.country=='AE'){
+  //                jQuery('.show_brand_by_country').hide();
+  //                jQuery('.show_brand_by_dubai').show();
+
+  //            }
+  //            if(resp.country=='US'){
+  //             jQuery('.show_brand_by_country').hide();
+  //             jQuery('.show_brand_by_dubai').hide();
+  //             jQuery('.show_job_popup_by_country').hide();
+  //             jQuery('.show_usa_popup_by_country').show();
+
+  //         }
+             
+  //       });
+  //     }
+  
+   
+
+  //user access website again 
+  /*var dt = new Date();
+  var currentHour = dt.getHours();
+  var themeExpireTimeStamp = getToken('themeExpireTimeStamp');
+  var currentThemeTime = new Date().getTime();
+  if (!themeExpireTimeStamp) {
+    setToken('themeExpireTimeStamp', 0);
+    if (currentHour >= 6 && currentHour < 18) {       
+      setThemeWhite();
+    }
+    else {
+      setThemeBlack();
+    }
+  } else if (currentThemeTime < themeExpireTimeStamp) {
+    getToken('changeTheme') === 'black' ? setThemeBlack() : setThemeWhite();
+  } else if (currentHour >= 6 && currentHour < 18) {
+    // this.IsDarkMode = false;
+    setThemeWhite();
+  }
+  else {
+    setThemeBlack();
+    // this.IsDarkMode = true;
+  }*/
+
+if (!getCookie('theme_mode')) {
+   
+  var dt = new Date();
+  var currentHour = dt.getHours(); 
+  if (currentHour >= 6 && currentHour < 18) {       
+    //setThemeWhite();
+    mode='white';
+    setThemeWhite();
+    $cookie_name = "theme_mode";
+    $cookie_value = mode;
+    setCookie($cookie_name, $cookie_value, 1);
+  }
+  else {
+    //setThemeBlack();
+    mode='dark';
+    setThemeBlack();
+    $cookie_name = "theme_mode";
+    $cookie_value = mode;
+    setCookie($cookie_name, $cookie_value, 1);
+  }
+}
+// if (getCookie('showpopup')) {
+//   // jQuery('.brand-popup-wrap').hide();
+//   // jQuery('.gitex-popup-wrap').hide();
+//   // jQuery('.usa-popup-wrap').hide();
+//   jQuery('.vp-popup').hide();
+// }
+// if (getCookie('showjobpopup')) {
+//   //jQuery('.job-popup-wrap').hide();
+// }
+  // jQuery('.close-btn').click(function () {
+  //   // jQuery('.brand-popup-wrap').hide();
+  //   // jQuery('.gitex-popup-wrap').hide();
+  //   // jQuery('.usa-popup-wrap').hide();
+  //   jQuery('.vp-popup').hide();
+  //   setCookie('showpopup','yes',1);
+
+     
+  // });
+  // jQuery(document).on("click", ".close_jobpopup", function () {
+  //     jQuery('.job-popup-wrap').hide();
+  //     setCookie('showjobpopup','yes',1);
+  // });
+  
+  jQuery('.theme-mode-icon').click(function () {
+
+    var mode='white';
+
+    if (jQuery('.black-white-theme').hasClass('theme-black')) {
+      mode='white';
+      setThemeWhite();
+      $cookie_name = "theme_mode";
+      $cookie_value = mode;
+      setCookie($cookie_name, $cookie_value, 1);
+    } else {
+      mode='dark';
+      setThemeBlack();
+      $cookie_name = "theme_mode";
+      $cookie_value = mode;
+      setCookie($cookie_name, $cookie_value, 1);
+    }
+
+
+  //   jQuery.ajax({
+  //     type: 'GET',
+  //     dataType: 'html',
+  //     url: ajax.ajax_url,
+  //     data: 'action=set_thememode&mode=' +mode ,
+  //     beforeSend: function () {
+          
+  //     },
+  //     success: function (data) {
+          
+  //         convertAnyImgToSVG();
+           
+  //     },
+  //     complete: function () {
+          
+
+  //     }
+  // });
+
+
+    const expireThemeTime = new Date().getTime() + 43200000;
+    setToken('themeExpireTimeStamp', expireThemeTime);
+  });
+
+
+  //CONVERT IMG TAG(.svg) TO SVG TAG<svg>
+  convertAnyImgToSVG();
+
+   
+   
+});
+ 
+jQuery(document).on('click','.scroll a',function(e) {   
+  e.preventDefault();
+  var hash = this.hash;
+
+  if(hash){
+    var a_href=jQuery(this).attr('href');       
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('#');
+    var target = hashes[0].replace(/\/$/, '');       
+    var href_only = a_href.slice(window.location.href.indexOf('?') + 1).split('#'); 
+    var href_target = href_only[0].replace(/\/$/, '');         
+       if(target==href_target){          
+        jQuery('html, body').animate({
+            scrollTop: jQuery(hash).offset().top - ((jQuery('header').innerHeight()))
+        }, 1000);
+       }else{
+        window.location.href = a_href;
+       }
+      
+  }else{
+    var a_href=jQuery(this).attr('href');
+    window.location.href = a_href;
+  }
+  return false;
+});
+var hash = window.location.hash;
+if(hash){
+var get_header_height = jQuery('header').height();                             
+jQuery('html, body').animate({
+    scrollTop: ((jQuery(hash).offset().top)-get_header_height)
+}, 500);
+}
+function loadclocktiming() {
+    var currentTimeIn = returnCurrentTime(5.5);
+
+    if (currentTimeIn >= 6 && currentTimeIn < 18) {
+      jQuery('.clock_india').removeClass('night-mode');
+    }
+    else {
+      jQuery('.clock_india').addClass('night-mode');
+    }
+
+    var currentTimeAUS = returnCurrentTime(11);
+    if (currentTimeAUS >= 6 && currentTimeAUS < 18) {
+      jQuery('.clock_australia').removeClass('night-mode');
+    }
+    else {
+      jQuery('.clock_australia').addClass('night-mode');
+    }
+
+    var currentTimeUSA = returnCurrentTime(-8);
+    if (currentTimeUSA >= 6 && currentTimeUSA < 18) {
+      jQuery('.clock_usa').removeClass('night-mode');
+    }
+    else {
+      jQuery('.clock_usa').addClass('night-mode');
+    }
+
+
+    var currentTimeDUBAI = returnCurrentTime(4);
+    if (currentTimeDUBAI >= 6 && currentTimeDUBAI < 18) {
+
+      jQuery('.clock_dubai').removeClass('night-mode');
+    }
+    else {
+      jQuery('.clock_dubai').addClass('night-mode');
+
+    }
+}
+function setThemeWhite() {
+  jQuery('.nav-mobile').removeClass('black-theme-mb-menu');
+  jQuery('.theme-mode-icon').removeClass('black-theme');
+
+  jQuery('.footer').removeClass('black-theme');
+
+  jQuery('.insert-remove-container').removeClass('theme-black');
+  jQuery('.insert-remove-container').addClass('theme-white');
+
+  jQuery('header.globalNav').removeClass('black-theme-menu');
+
+  jQuery('.white-logo').show();
+  jQuery('.black-logo').hide();
+
+  jQuery('#EmailModal').removeClass('black-theme');
+
+
+  jQuery('body').addClass('body-theme-white');
+  jQuery('body').removeClass('body-theme-dark');
+  
+  setToken('changeTheme', 'white');
+}
+function setThemeBlack() {
+  jQuery('.nav-mobile').addClass('black-theme-mb-menu');
+  jQuery('.footer').addClass('black-theme');
+
+  jQuery('.insert-remove-container').addClass('theme-black');
+  jQuery('.insert-remove-container').removeClass('theme-white');
+
+  jQuery('header.globalNav').addClass('black-theme-menu');
+
+  jQuery('.white-logo').hide();
+  jQuery('.black-logo').show();
+
+
+  //white-logo        
+  jQuery('.theme-mode-icon').addClass('black-theme');
+  setToken('changeTheme', 'black');
+
+  jQuery('body').removeClass('body-theme-white');
+  jQuery('body').addClass('body-theme-dark');
+
+  jQuery('#EmailModal').addClass('black-theme');
+}
+function changeThemeMode() {
+
+  // const expireThemeTime = new Date().getTime() + this.config.hourTimestamp;
+  // if (this.commonService.IsDarkMode == false) {
+  //   this.commonService.IsDarkMode = true;
+
+  // } else {
+  //   this.commonService.IsDarkMode = false;
+  //   $('.theme-mode-icon').removeClass('black-theme');
+  //   setToken('changeTheme', 'white');
+  //   setToken('themeExpireTimeStamp', expireThemeTime);
+  // }
+  convertAnyImgToSVG();
+}
+
+function convertAnyImgToSVG() {
+  jQuery('img.svg-convert').each(function () {
+
+    var $img = jQuery(this);
+    var imgURL = $img.attr('src');
+    var attributes = $img.prop("attributes");
+
+    jQuery.get(imgURL, function (data) {
+      // Get the SVG tag, ignore the rest
+      var $svg = jQuery(data).find('svg');
+
+      // Remove any invalid XML tags
+      $svg = $svg.removeAttr('xmlns:a');
+
+      // Loop through IMG attributes and apply on SVG
+      jQuery.each(attributes, function () {        
+        if(this.name=='class' || this.name=='src'){
+          $svg.attr(this.name, this.value);
+        }
+      });
+
+      // Replace IMG with SVG
+      $img.replaceWith($svg);
+
+      jQuery('.svg-convert title').remove();
+    }, 'xml');
+  });
+}
+function setToken(key, value) {
+  window.localStorage.setItem(key, value);
+}
+
+function getToken(key) {
+  return window.localStorage.getItem(key);
+}
+function returnCurrentTime(offset) {
+  var date = new Date;
+  var utc = date.getTime() + (date.getTimezoneOffset() * 60000);
+  var dateGMT = new Date(utc + (3600000 * offset));
+  return dateGMT.getHours();
+}  
+function setCookie(name,value,days) {
+  var expires = "";
+  if (days) {
+      var date = new Date();
+      date.setTime(date.getTime() + (days*24*60*60*1000));
+      expires = "; expires=" + date.toUTCString();
+  }
+  document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+}
+function getCookie(name) {
+  var nameEQ = name + "=";
+  var ca = document.cookie.split(';');
+  for(var i=0;i < ca.length;i++) {
+      var c = ca[i];
+      while (c.charAt(0)==' ') c = c.substring(1,c.length);
+      if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+  }
+  return null;
+}
+function eraseCookie(name) {   
+  document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+var load_footer_data =0;
+var load_new_footer_data =0;
+jQuery(document).ready(function () {
+
+  loadclocktiming();
+                
+  // jQuery.getScript(ajax.template_directory + '/assets/scripts/jclocks.js', function() {
+      convertAnyImgToSVG();
+  // });
+  jQuery(window).bind('scroll', function () {
+    //Load Old Footer
+
+    
+    /*setTimeout(() => {
+      if(load_footer_data==0){
+            jQuery.ajax({
+              
+            type: 'GET',
+            dataType: 'html',
+            url: ajax.ajax_url,
+            data: 'action=footer_ajax_data&page_id='+ ajax.currentID,
+            success: function(data) {                        
+            
+                jQuery('#footer_load').html(data); 
+                
+                 
+                 
+                
+                
+                
+            },
+            complete: function(){
+              return false;
+            }
+        }); 
+        
+    
+      load_footer_data=1;
+    }
+    }, 2000); */
+
+    //Load New Footer
+    /*setTimeout(() => {
+      if(load_new_footer_data==0){
+              jQuery.ajax({
+                
+              type: 'GET',
+              dataType: 'html',
+              url: ajax.ajax_url,
+              data: 'action=new_footer_ajax_data&page_id='+ ajax.currentID,
+              success: function(data) {                        
+              
+                  jQuery('#new_footer_load').html(data); 
+                   
+                  
+                  
+                  
+                  
+                  
+              },
+              complete: function(){
+                return false;
+              }
+          }); 
+          
+      
+      load_new_footer_data=1;
+      }
+    }, 2000); */
+    
+  });
+});
+
+
+// Common Sidebar Form Start
+jQuery(document).ready(function($) {
+  $(document).on("click", ".sideform-open", function() {
+    $(".sidebar-chat-form").toggleClass("open");
+    $(".chatbot-overlay").toggleClass("open");
+    $("body").toggleClass("fix-layout");
+  });
+
+  $(document).on("click", ".chatbot-overlay", function() {
+    $(".sidebar-chat-form").toggleClass("open");
+    $(".chatbot-overlay").toggleClass("open");
+    $("body").toggleClass("fix-layout");
+  });
+
+  $(document).on("click", ".close-bot", function() {
+    $(".sidebar-chat-form").toggleClass("open");
+    $(".chatbot-overlay").toggleClass("open");
+    $("body").toggleClass("fix-layout");
+  });
+});
+// Common Sidebar Form End

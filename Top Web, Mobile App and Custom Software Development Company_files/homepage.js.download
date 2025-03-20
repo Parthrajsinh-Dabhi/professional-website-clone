@@ -1,0 +1,164 @@
+var getVideoHeightFlag = false;
+var getVideoHeight = jQuery('.home-video-section').height();
+jQuery('.home-video-float-section').height(getVideoHeight);
+jQuery('.home-video-float-section').hide();
+
+  
+jQuery(document).ready(function ($) {
+
+    // Swiper Slider
+    const swiper = new Swiper(".cs-swiper", {
+        slidesPerView: "auto",
+        spaceBetween: 0,
+        speed: 600,
+        mousewheel: {
+          sensitivity: 2,
+        },
+      });
+    
+
+    jQuery(document).on("click", ".scroll-video-btn", function () {
+
+        if ($('.homepage_video').length > 0) {
+            $('.homepage_video').get(0).pause();
+            $('.homepage_video').attr('paused', true);
+            $('.home-video-section').removeClass('video-scroll');
+            $('.home-video-box .video-btn-play').removeClass('video-btn-pause');
+            $('.home-video-box .video-btn-play').show();
+            $('.home-video-float-section').height(0);
+            getVideoHeightFlag = false;
+        }
+    });
+
+    jQuery(document).on("click", ".video-btn-play", function () {
+        jQuery(".tglclass").toggleClass("icon-video-pause icon-video-play");
+        jQuery('.testimonial-video source').each(function () {
+            let $this = this;
+            let dataSrc = jQuery($this).attr('data-src');
+
+            if (jQuery('.testimonial-video').attr('paused') == undefined) {
+                jQuery($this).attr('src', dataSrc);
+            }
+        });
+
+        if (!jQuery(this).hasClass('video-btn-pause')) {
+            jQuery('.testimonial-video').each(function () {
+                jQuery(this).get(0).pause();
+                jQuery('.video-btn-play').removeClass('video-btn-pause');
+
+            });
+            if (!jQuery(this).hasClass('video-btn-pause')) {
+                if (jQuery('.testimonial-video').attr('paused') == undefined) {
+                    jQuery(this).siblings('.testimonial-video')[0].load();
+                }
+                jQuery(this).siblings('.testimonial-video')[0].play();
+                jQuery(this).addClass('video-btn-pause');
+                getVideoHeightFlag = true;
+            } else {
+                jQuery(this).removeClass('video-btn-pause');
+                jQuery(this).siblings('.testimonial-video')[0].pause();
+            }
+        } else {
+            jQuery(this).removeClass('video-btn-pause');
+            jQuery(this).siblings('.testimonial-video')[0].pause();
+        }
+    });
+    jQuery(document).on("click", ".video-btn-pause", function () {
+        getVideoHeightFlag = false;
+    });
+    jQuery(document).on("click", ".jugaad-video-btn-play", function () {
+
+        jQuery('#jugaad-modal').on('hidden.bs.modal', function () {
+            var div = document.getElementById("elementremove2");
+              div.innerHTML = "";
+        })
+        jQuery(this).hide();
+        jQuery('.jugaad-video-img-play').hide();
+        jQuery("iframe#ytplayer").attr("src", jQuery("iframe#ytplayer").attr("src").replace("autoplay=0", "autoplay=1"));
+    });
+    var load_data = 1;
+    convertAnyImgToSVG();
+   
+    //*========== Client Testimonial Slider =============*//
+    /*jQuery(window).bind('scroll load', function () {
+        let scrollTopPosition = window.pageYOffset || document.documentElement.scrollTop;
+
+        if (scrollTopPosition > 5) {
+
+            if (load_data == 1) {
+                jQuery.ajax({
+                    type: 'GET',
+                    dataType: 'html',
+                    url: ajax.ajax_url,
+                    data: 'action=homepage_ajax_data',
+                    beforeSend: function () {
+                        jQuery('.ajax_loader').show();
+                    },
+                    success: function (data) {
+                        jQuery('#home-pg').append(data);
+                       
+
+
+                        
+                         
+
+                    },
+                    complete: function () {
+                        jQuery('.ajax_loader').hide();
+                    }
+                });
+            }
+
+            load_data = 2;
+        }
+    }); */
+});
+
+function isOutOfViewport(elem) {
+    const $window = jQuery(window);
+    const windowScrollTop = $window.scrollTop();
+    const videoBottom = jQuery(elem).offset().top + jQuery(elem).outerHeight() - getVideoHeight;
+    return (windowScrollTop > videoBottom);
+}
+function convertAnyImgToSVG() {
+    jQuery('img.svg-convert').each(function () {
+
+        var $img = jQuery(this);
+        var imgURL = $img.attr('src');
+        var attributes = $img.prop("attributes");
+
+        jQuery.get(imgURL, function (data) {
+            // Get the SVG tag, ignore the rest
+            var $svg = jQuery(data).find('svg');
+
+            // Remove any invalid XML tags
+            $svg = $svg.removeAttr('xmlns:a');
+
+            // Loop through IMG attributes and apply on SVG
+            jQuery.each(attributes, function () {
+                $svg.attr(this.name, this.value);
+            });
+
+            // Replace IMG with SVG
+            $img.replaceWith($svg);
+
+            jQuery('.svg-convert title').remove();
+        }, 'xml');
+    });
+}
+
+jQuery(function () {
+    jQuery(window).scroll(function () {
+        const $video = jQuery('.home-video-section');
+
+        if (jQuery('.growth-detail').length > 0) {
+            if (isOutOfViewport('.growth-detail') && getVideoHeightFlag) {
+                $video.addClass('video-scroll');
+                jQuery('.home-video-float-section').show();
+            } else {
+                $video.removeClass('video-scroll');
+                jQuery('.home-video-float-section').hide();
+            }
+        }
+    });
+});

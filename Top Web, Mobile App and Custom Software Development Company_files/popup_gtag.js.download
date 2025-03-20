@@ -1,0 +1,104 @@
+ 
+
+// jQuery(document).ready(function () {
+//   jQuery('.vp-popup').show();
+  
+// if (getCookie('showpopup')) {
+//   jQuery('.vp-popup').hide();
+// }  
+// jQuery('.close-btn').click(function () {
+//     jQuery('.vp-popup').hide();
+//     setCookie('showpopup','yes',1);
+// });
+// });
+
+function checkCustomScript(setupCountryBasedPopup, pattern1Data, pattern2Data) {
+  if (!setupCountryBasedPopup || !pattern1Data || !pattern2Data) return false;
+
+  if (!setupCountryBasedPopup.GLOBAL || !pattern1Data.GLOBAL || !pattern2Data.GLOBAL) return false;
+  if (!getCookie('showpopup')) {
+      getUserCountry(function(countryCode) {
+          var isPattern = setupCountryBasedPopup.hasOwnProperty(countryCode) ? setupCountryBasedPopup[countryCode] : setupCountryBasedPopup['GLOBAL'];
+          if (isPattern == 'pattern1') {
+              countryCode = (!pattern1Data[countryCode]) ? 'GLOBAL' : countryCode;
+              if (!pattern1Data[countryCode]) return false;
+              pattern1Modal(pattern1Data[countryCode]);
+          } 
+          if (isPattern == 'pattern2') {
+              countryCode = (!pattern2Data[countryCode]) ? 'GLOBAL' : countryCode;
+              if (!pattern2Data[countryCode]) return false;
+              pattern2Modal(pattern2Data[countryCode]);
+          }
+      });
+  };
+}
+
+function getUserCountry(callback) {
+  fetch('https://ipapi.co/json/')
+      .then(response => response.json())
+      .then(data => callback(data.country))
+      .catch(error => console.error('Error fetching country:', error));
+}
+
+function pattern1Modal(data) {
+  var jobModalHtml = `
+<div class="job-popup-wrap slide-right pattern1_popup">
+   <div class="popup-box-wrap">
+       <div class="close-btn close_jobpopup">
+           <span class="icon-locker-close-icon"></span>
+       </div>
+       <div class="banner">
+           <img src="${data.banner_image_path}" alt="${data.banner_image_alt_text}">
+       </div>
+       <div class="job-content">
+           <h4>${data.heading}</h4>
+           <a class="redirect-link" href="${data.redirect_path}">${data.redirect_button_text}<span class="fa icon-contact-arrow"></span></a>
+           <h6>${data.text}</h6>
+       </div>
+   </div>
+</div>
+`;
+  document.body.insertAdjacentHTML('beforeend', jobModalHtml);
+
+  var modal = document.querySelector('.pattern1_popup');
+  modal.style.display = 'block';
+
+  jQuery('.close_jobpopup').click(function() {
+      jQuery('.pattern1_popup').hide();
+      setCookie('showpopup', 'yes', 1);
+  });
+
+  document.querySelector('.redirect-link').addEventListener('click', function() {
+      window.location.href = data.redirect_path;
+  });
+}
+
+function pattern2Modal(data) {
+  var modalHtml = `
+   <div class="vp-popup slide-right pattern2_popup">
+       <div class="nr-popup-wrap">
+           <div class="close-btn">
+               <span class="icon-locker-close-icon"></span>
+           </div>
+           <a class="brand-link" href="${data.redirect_path}">
+               <div class="banner">
+                   <img src="${data.image_path}" width="${data.image_width}" height="${data.image_height}" alt="">
+               </div>
+           </a>
+       </div>
+   </div>
+`;
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+  var modal = document.querySelector('.pattern2_popup');
+  modal.style.display = 'block';
+
+  jQuery('.close-btn').click(function() {
+      jQuery('.pattern2_popup').hide();
+      setCookie('showpopup', 'yes', 1);
+  });
+
+  document.querySelector('.brand-link').addEventListener('click', function() {
+      window.location.href = data.redirect_path;
+  });
+}

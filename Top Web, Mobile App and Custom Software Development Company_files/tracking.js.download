@@ -1,0 +1,43 @@
+ 
+// Enquiry Form 
+if (!getToken("ind_session_key")) {
+  //alert('test');
+  //var referer = btoa(document.referrer);
+  var referer = getToken("referrer");
+  jQuery.ajax({
+      //mode:"abort",
+      type: 'GET',
+      dataType: 'json',
+      url: ajax.site_url+'/wp-json/wp/v2/track-details?key='+referer,        
+      success: function(data) {                        
+        //setToken("session_key", btoa(data.session_value));   
+        setToken("ind_session_key", data.session_value);   
+        window.localStorage.removeItem('referrer');   
+        //console.log(data);     
+      }
+  });
+}else{
+  //alert('else');
+  var session_key=btoa(getToken("ind_session_key"));  
+  var current_page  = ajax.my_currentpage;
+  var slug  = ajax.my_page_slug;
+  var referer = btoa(document.referrer);
+
+  var loaddata = { 'action': "add_page", slug: slug, key: referer, session_key: session_key, current_page: current_page };
+  jQuery.ajax({
+    //mode:"abort",
+    type: 'GET', 
+    data: loaddata,
+    url: ajax.ajax_url,        
+    success: function(data) {                        
+      
+    }
+});
+}
+function setToken(key, value) {
+  window.localStorage.setItem(key, value);
+}
+
+function getToken(key) {
+  return window.localStorage.getItem(key);
+}
